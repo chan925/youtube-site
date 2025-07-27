@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube Search</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+    h1 { color: red; }
+    #results img { width: 100%; max-width: 320px; }
+    .video { margin-bottom: 20px; padding: 10px; background: #fff; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>🎥 YouTube Video Search</h1>
+  <input type="text" id="search" placeholder="Search YouTube..." />
+  <button onclick="search()">Search</button>
+  <div id="results"></div>
+
+  <script>
+    async function search() {
+      const query = document.getElementById("search").value;
+      const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      const results = document.getElementById("results");
+      results.innerHTML = "";
+      data.items.forEach(item => {
+        const videoId = item.id.videoId;
+        const title = item.snippet.title;
+        const thumb = item.snippet.thumbnails.medium.url;
+        const channel = item.snippet.channelTitle;
+
+        results.innerHTML += `
+          <div class="video">
+            <a href="https://www.youtube.com/watch?v=${videoId}" target="_blank">
+              <img src="${thumb}" alt="${title}" />
+              <h3>${title}</h3>
+              <p>📺 ${channel}</p>
+            </a>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
